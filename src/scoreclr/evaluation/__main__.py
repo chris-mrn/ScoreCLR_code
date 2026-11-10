@@ -2,7 +2,8 @@
 
     python -m scoreclr.evaluation --run runs/cifar10_scoreclr --root stl10=./datasets --root dtd=./datasets
 
-Reads <run>/last.pt (its config and weights) and writes <run>/evaluation.json:
+Reads <run>/last.pt (its config and weights), or --checkpoint FILE (e.g. a released weights file), and
+writes <run>/evaluation.json:
   monitor   online classifier and kNN accuracy (scoreclr.evaluation.knn)
   linear    offline linear probe (scoreclr.evaluation.linear)
   stats     alignment / uniformity, RankMe of h and z, kurtosis, Epps-Pulley (scoreclr.evaluation.stats),
@@ -34,7 +35,8 @@ TARGETS = {"cifar10": ["stl10", "dtd"], "imagenet100": ["cifar10", "stl10", "dtd
 
 def main(argv=None) -> dict:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--run", required=True, type=Path)
+    p.add_argument("--run", required=True, type=Path, help="output directory (and checkpoint unless --checkpoint)")
+    p.add_argument("--checkpoint", type=Path, default=None, help="default: <run>/last.pt")
     p.add_argument("--root", action="append", default=[], metavar="TARGET=PATH")
     p.add_argument("--targets", nargs="*", default=None, help="default: the paper's targets; empty to skip")
     p.add_argument("--download", action="store_true")
@@ -44,8 +46,10 @@ def main(argv=None) -> dict:
     args = p.parse_args(argv)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    ckpt = load_checkpoint(args.run / "last.pt")
-    assert ckpt is not None, f"no checkpoint in {args.run}"
+    path = args.checkpoint or args.run / "last.pt"
+    ckpt = load_checkpoint(path)
+    assert ckpt is not None, f"no checkpoint at {path}"
+    args.run.mkdir(parents=True, exist_ok=True)
     cfg = Config(apply_overrides(ckpt["config"], args.overrides))
     method = build_method(cfg)
     method.load_state_dict(ckpt["model"])
