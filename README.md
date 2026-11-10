@@ -32,7 +32,7 @@ src/scoreclr/
                         normality, transfer, and the paper's tables
   utils/                config, distributed, checkpoints, logging
   tests/
-scripts/                reproduce_paper.sh, make_imagenet100.py
+scripts/                reproduce_paper.sh, make_imagenet100.py, export_weights.py, download_weights.sh
 analysis/               research tooling outside the package: run-to-run diagnostics, functional
                         constants, cost model (paper figure) and measured GPU cost (benchmarks/)
 ```
@@ -106,6 +106,19 @@ ImageNet-100 rows `NGPU=2` GPUs with 128 images per GPU. The tables alone:
 
 Every result is a single run with seed 5. The objectives, LARS and schedules of the baselines are
 ported from solo-learn.
+
+## Pretrained weights
+
+The weights of the eight rows above are attached to the GitHub release `weights-v1`, one file per row
+(`<row>.pt`: model weights, config and epoch) with a `SHA256SUMS` file:
+
+```bash
+bash scripts/download_weights.sh                       # all rows into ./weights, checksums verified
+python -m scoreclr.evaluation --run runs/cifar10_scoreclr --checkpoint weights/cifar10_scoreclr.pt \
+    --root stl10=./datasets --root dtd=./datasets      # the paper's evaluation of the released weights
+```
+
+`scripts/export_weights.py runs/<row> ... --out weights` produces such files from your own runs.
 
 What to expect:
 

@@ -25,6 +25,21 @@ def test_train_resume_and_evaluate(tiny_cfg):
     assert json.load(open(f"{out}/evaluation.json"))["monitor"]["eval/knn_acc1"] >= 0
 
 
+def test_exported_weights_are_evaluated_like_the_checkpoint(tiny_cfg, tmp_path):
+    from scoreclr.evaluation.__main__ import main as evaluate
+    from scoreclr.utils import export_weights
+
+    tiny_cfg.optim.epochs = 1
+    train(tiny_cfg)
+    out = tiny_cfg.output_dir
+    exported = export_weights(f"{out}/last.pt", tmp_path / "w" / "run.pt")
+    assert set(torch.load(exported, weights_only=False)) == {"model", "config", "epoch"}
+    args = ["--targets", "--num_workers", "0", "--probe_epochs", "1"]
+    a = evaluate(["--run", out, *args])
+    b = evaluate(["--run", str(tmp_path / "other"), "--checkpoint", str(exported), *args])
+    assert a["monitor"]["eval/knn_acc1"] == b["monitor"]["eval/knn_acc1"]
+
+
 def test_grad_norm_clips_in_place():
     from scoreclr.train.train import grad_norm
 
