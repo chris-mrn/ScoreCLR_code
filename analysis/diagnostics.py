@@ -22,10 +22,10 @@
           with or without deterministic kernels or a tiny initial perturbation, and how far apart they
           drift (parameters, codes on a fixed probe set) step after step
 
-    python -m scoreclr.diagnostics train --config config/cifar10_scoreclr.yaml [--every 100] [key=value ...]
-    python -m scoreclr.diagnostics twin --config config/cifar10_scoreclr.yaml --out twin.jsonl --epochs 20 \
+    python analysis/diagnostics.py train --config config/cifar10_scoreclr.yaml [--every 100] [key=value ...]
+    python analysis/diagnostics.py twin --config config/cifar10_scoreclr.yaml --out twin.jsonl --epochs 20 \
         [--deterministic] [--perturb 1e-6] [key=value ...]
-    python -m scoreclr.diagnostics report RUN [RUN ...] [--epochs 9,49,99,299,999]
+    python analysis/diagnostics.py report RUN [RUN ...] [--epochs 9,49,99,299,999]
 
 `train` trains exactly as `python -m scoreclr.train`, with the same trajectory: the probes run without
 gradient, with the encoder in eval mode (no BatchNorm update), on a fixed probe set (two augmented views

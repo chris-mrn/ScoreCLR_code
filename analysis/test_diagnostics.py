@@ -4,7 +4,7 @@ import math
 
 import torch
 
-from scoreclr import diagnostics
+import diagnostics
 from scoreclr.train.train import train
 
 

@@ -1,8 +1,8 @@
 """Measured GPU cost against batch size of the ScoreCLR and SimCLR objectives, with the code used for
 training (scoreclr.methods, scoreclr.train.train.train_step):
 
-    python benchmarks/measured_objective_cost.py --out results.jsonl --commit $(git rev-parse --short HEAD)
-    python benchmarks/plot_measured_cost.py results.jsonl cost_vs_batch_measured.pdf
+    python analysis/benchmarks/measured_objective_cost.py --out results.jsonl --commit $(git rev-parse --short HEAD)
+    python analysis/benchmarks/plot_measured_cost.py results.jsonl cost_vs_batch_measured.pdf
 
 One GPU, no data loader, cudnn.benchmark off and default TF32 settings as in training. B is the
 number of images (2B codes); time is the median over n_iters CUDA-event-timed steps after warm-up;

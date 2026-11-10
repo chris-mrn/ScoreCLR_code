@@ -27,8 +27,8 @@ meaningful for the closed-form estimators (P_lin, P_rff, LS_lin), whose smoothne
 Whitening (--modes white) is available but not the default: random features in high dimension do not see
 structure in a small subspace, and whitening a low-rank latent mostly amplifies noise.
 
-    python scripts/functional_constants.py --sanity
-    python scripts/functional_constants.py --runs simclr=RUN1,RUN2 scoreclr=RUN3,RUN4 [--l2] [--key z_val]
+    python analysis/functional_constants.py --sanity
+    python analysis/functional_constants.py --runs simclr=RUN1,RUN2 scoreclr=RUN3,RUN4 [--l2] [--key z_val]
 RUN is a run directory containing features.npz (keys z_val, h_val, y_val).
 """
 import argparse

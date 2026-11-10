@@ -1,6 +1,6 @@
 """Analytical cost vs global batch size B (the paper's Fig. fig:cost and Table tab:cost)
 
-    python benchmarks/cost_model.py [out.pdf]
+    python analysis/benchmarks/cost_model.py [out.pdf]
 
 Copied from the paper sources (figures/make_cost_vs_batch.py). Analytical cost vs global batch size B (two views per image), Fig. fig:cost, unconditional recipe.
 

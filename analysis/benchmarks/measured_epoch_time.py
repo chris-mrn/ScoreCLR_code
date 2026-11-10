@@ -1,7 +1,7 @@
 """Wall-clock time per epoch of one method, with the training code itself (setup, train_one_epoch) and
 its config, without evaluation, checkpointing or logging:
 
-    [torchrun --nproc_per_node=2] benchmarks/measured_epoch_time.py --config config/cifar10_scoreclr.yaml \
+    [torchrun --nproc_per_node=2] analysis/benchmarks/measured_epoch_time.py --config config/cifar10_scoreclr.yaml \
         --epochs 13 --out scoreclr.json [key=value ...]
 
 Writes the time and the peak allocated memory (max over processes) of every epoch; report the median
