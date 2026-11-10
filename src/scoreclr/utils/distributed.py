@@ -11,7 +11,7 @@ def init_distributed() -> torch.device:
     """Joins the process group when launched with torchrun; returns this process's device."""
     if "RANK" in os.environ and not dist.is_initialized():
         backend = "nccl" if torch.cuda.is_available() else "gloo"
-        dist.init_process_group(backend, timeout=timedelta(hours=4))  # rank 0 evaluates alone (IN-1k kNN > 1 h)
+        dist.init_process_group(backend, timeout=timedelta(hours=4))  # rank 0 evaluates alone while the others wait
     if torch.cuda.is_available():
         local_rank = int(os.environ.get("LOCAL_RANK", 0))
         torch.cuda.set_device(local_rank)

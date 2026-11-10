@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets
 
-NUM_CLASSES = {"cifar10": 10, "cifar100": 100, "imagenet100": 100, "imagenet1k": 1000, "fake": 10}
+NUM_CLASSES = {"cifar10": 10, "cifar100": 100, "imagenet100": 100, "fake": 10}
 
 
 def num_classes(data_cfg) -> int:

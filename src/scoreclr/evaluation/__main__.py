@@ -29,8 +29,7 @@ from scoreclr.methods import build_method
 from scoreclr.utils import Config, load_checkpoint
 from scoreclr.utils.config import apply_overrides
 
-TARGETS = {"cifar10": ["stl10", "dtd"], "imagenet100": ["cifar10", "stl10", "dtd"],  # the paper's transfer table
-           "imagenet1k": ["cifar10", "stl10", "dtd"]}
+TARGETS = {"cifar10": ["stl10", "dtd"], "imagenet100": ["cifar10", "stl10", "dtd"]}  # the paper's transfer table
 
 
 def main(argv=None) -> dict:
