@@ -1,0 +1,29 @@
+# ScoreCLR, CIFAR-10: ResNet-18, 1000 epochs, batch 128, 3 repulsion queries, seed 5, 1 GPU.
+# Evaluation (shared by all methods): python -m scoreclr.evaluation
+method: scoreclr
+seed: 5
+output_dir: runs/cifar10_scoreclr
+data:
+  dataset: cifar10
+  root: ./datasets
+  crop_size: 32
+  num_workers: 8
+  augment:
+    crop_scale: [0.08, 1.0]
+    color_jitter: {prob: 0.8, brightness: 0.8, contrast: 0.8, saturation: 0.8, hue: 0.2}
+    grayscale_prob: 0.2
+    blur_prob: 0.5
+    flip_prob: 0.5
+model: {backbone: resnet18, proj_hidden_dim: 2048, proj_dim: 256, score_hidden_dim: 256,
+  score_time_emb_dim: 64}
+loss: {attr_weight: 5.0, p_mean: -1.2, p_std: 1.2, num_queries: 3}
+optim: {epochs: 1000, batch_size: 128, lr: 0.0001, weight_decay: 1.0e-06, classifier_lr: 0.01,
+  score_lr: 0.001, score_weight_decay: 0.01, score_steps: 1, cosine_decay_epochs: 100,
+  grad_clip: null}
+eval: {every: 10}
+wandb:
+  enabled: false
+  project: scoreclr
+  entity: null
+  group: null
+  tags: []

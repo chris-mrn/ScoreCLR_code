@@ -1,0 +1,30 @@
+# ScoreCLR, ImageNet-100: ResNet-18, 2 GPUs x 128, 5 score updates and 3 repulsion queries, seed 5.
+# Evaluation (shared by all methods): python -m scoreclr.evaluation
+method: scoreclr
+seed: 5
+output_dir: runs/imagenet100_scoreclr
+data:
+  dataset: imagenet100
+  train_path: ./datasets/imagenet100/train
+  val_path: ./datasets/imagenet100/val
+  crop_size: 224
+  num_workers: 16
+  augment:
+    crop_scale: [0.08, 1.0]
+    color_jitter: {prob: 0.8, brightness: 0.8, contrast: 0.8, saturation: 0.8, hue: 0.2}
+    grayscale_prob: 0.2
+    blur_prob: 0.5
+    flip_prob: 0.5
+model: {backbone: resnet18, proj_hidden_dim: 2048, proj_dim: 256, score_hidden_dim: 256,
+  score_time_emb_dim: 64}
+loss: {attr_weight: 2.0, p_mean: -1.2, p_std: 0.8, num_queries: 3}
+optim: {epochs: 400, batch_size: 128, lr: 0.0002, weight_decay: 1.0e-06, classifier_lr: 0.01,
+  score_lr: 0.001, score_weight_decay: 0.01, score_steps: 5, cosine_decay_epochs: 100,
+  grad_clip: null}
+eval: {every: 20}
+wandb:
+  enabled: false
+  project: scoreclr
+  entity: null
+  group: null
+  tags: []

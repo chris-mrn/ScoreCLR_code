@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scoreclr"
+version = "0.1.0"
+description = "Minimal ScoreCLR: self-supervised learning with a score-based repulsion."
+requires-python = ">=3.9"
+dependencies = ["torch>=2.0", "torchvision>=0.15", "pyyaml"]
+
+[project.optional-dependencies]
+wandb = ["wandb"]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["src/scoreclr/tests"]

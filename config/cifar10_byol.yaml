@@ -1,0 +1,30 @@
+# BYOL, shared AdamW recipe, CIFAR-10.
+# Every shared value (augmentations, encoder, 2048/256 projector without BatchNorm, AdamW lr 2e-4, batch 128,
+# 1000 epochs with a cosine over the last 100, encoder clipping at 1) is cifar10_simclr_adamw.yaml's.
+# Method values are solo-learn's CIFAR BYOL recipe : predictor hidden 4096,
+# tau 0.99 -> 1.0; the predictor has no BatchNorm, like the shared projector (model.pred_batchnorm=true: solo-learn's).
+method: byol
+seed: 5
+output_dir: runs/cifar10_byol
+data:
+  dataset: cifar10
+  root: ./datasets
+  crop_size: 32
+  num_workers: 8
+  augment:
+    crop_scale: [0.08, 1.0]
+    color_jitter: {prob: 0.8, brightness: 0.8, contrast: 0.8, saturation: 0.8, hue: 0.2}
+    grayscale_prob: 0.2
+    blur_prob: 0.5
+    flip_prob: 0.5
+model: {backbone: resnet18, proj_hidden_dim: 2048, proj_dim: 256, pred_hidden_dim: 4096, pred_batchnorm: false}
+loss: {base_tau: 0.99, final_tau: 1.0}
+optim: {epochs: 1000, batch_size: 128, lr: 0.0002, weight_decay: 1.0e-06, classifier_lr: 0.01,
+  cosine_decay_epochs: 100, grad_clip: 1.0}
+eval: {every: 10}
+wandb:
+  enabled: false
+  project: scoreclr
+  entity: null
+  group: null
+  tags: []

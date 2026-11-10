@@ -1,0 +1,6 @@
+__pycache__/
+*.egg-info/
+datasets/
+runs/
+wandb/
+.pytest_cache/

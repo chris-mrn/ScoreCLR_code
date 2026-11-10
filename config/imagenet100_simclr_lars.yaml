@@ -1,0 +1,39 @@
+# SimCLR, solo-learn LARS recipe, 2048/256 projector, ImageNet-100: LARS lr 0.3, 2 GPUs x 128, seed 5.
+# Evaluation (shared by all methods): python -m scoreclr.evaluation
+method: simclr
+seed: 5
+output_dir: runs/imagenet100_simclr_lars
+data:
+  dataset: imagenet100
+  train_path: ./datasets/imagenet100/train
+  val_path: ./datasets/imagenet100/val
+  crop_size: 224
+  num_workers: 16
+  augment:
+    crop_scale: [0.08, 1.0]
+    color_jitter: {prob: 0.8, brightness: 0.8, contrast: 0.8, saturation: 0.8, hue: 0.2}
+    grayscale_prob: 0.2
+    blur_prob: 0.5
+    flip_prob: 0.5
+model: {backbone: resnet18, proj_hidden_dim: 2048, proj_dim: 256}
+loss: {temperature: 0.2}
+optim:
+  epochs: 400
+  batch_size: 128
+  lr: 0.3
+  weight_decay: 0.0001
+  classifier_lr: 0.1
+  grad_clip: null
+  name: lars
+  lars: {momentum: 0.9, eta: 0.02, clip_lr: true, exclude_bias_n_norm: true}
+  schedule: warmup_cosine
+  warmup_epochs: 10
+  warmup_start_lr: 3.0e-05
+  precision: fp16
+eval: {every: 20}
+wandb:
+  enabled: false
+  project: scoreclr
+  entity: null
+  group: null
+  tags: []

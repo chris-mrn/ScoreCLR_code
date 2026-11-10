@@ -1,0 +1,32 @@
+# ScoreCLR, ImageNet-1k: the ImageNet-100 recipe (config/imagenet100_scoreclr.yaml) with one score query
+# (loss.num_queries=1) over 200 epochs, cosine
+# decay over the last 100 as on ImageNet-100, 2 GPUs x 128. Data: scripts/make_imagenet1k.py.
+# Evaluation (shared by all methods): python -m scoreclr.evaluation
+method: scoreclr
+seed: 5
+output_dir: runs/imagenet1k_scoreclr
+data:
+  dataset: imagenet1k
+  train_path: ./datasets/imagenet1k/train
+  val_path: ./datasets/imagenet1k/val
+  crop_size: 224
+  num_workers: 16
+  augment:
+    crop_scale: [0.08, 1.0]
+    color_jitter: {prob: 0.8, brightness: 0.8, contrast: 0.8, saturation: 0.8, hue: 0.2}
+    grayscale_prob: 0.2
+    blur_prob: 0.5
+    flip_prob: 0.5
+model: {backbone: resnet18, proj_hidden_dim: 2048, proj_dim: 256, score_hidden_dim: 256,
+  score_time_emb_dim: 64}
+loss: {attr_weight: 2.0, p_mean: -1.2, p_std: 0.8, num_queries: 1}
+optim: {epochs: 200, batch_size: 128, lr: 0.0002, weight_decay: 1.0e-06, classifier_lr: 0.01,
+  score_lr: 0.001, score_weight_decay: 0.01, score_steps: 5, cosine_decay_epochs: 100,
+  grad_clip: null}
+eval: {every: 25}
+wandb:
+  enabled: false
+  project: scoreclr
+  entity: null
+  group: null
+  tags: []

@@ -1,0 +1,39 @@
+# SimCLR, solo-learn LARS recipe, CIFAR-10: LARS lr 0.4, wd 1e-4, eta 0.02, biases and norms excluded,
+# batch 256, 10-epoch warm-up from 3e-5 then cosine per step, 16-bit mixed precision, seed 5, 1 GPU.
+# Evaluation (shared by all methods): python -m scoreclr.evaluation
+method: simclr
+seed: 5
+output_dir: runs/cifar10_simclr_lars
+data:
+  dataset: cifar10
+  root: ./datasets
+  crop_size: 32
+  num_workers: 8
+  augment:
+    crop_scale: [0.08, 1.0]
+    color_jitter: {prob: 0.8, brightness: 0.8, contrast: 0.8, saturation: 0.8, hue: 0.2}
+    grayscale_prob: 0.2
+    blur_prob: 0.5
+    flip_prob: 0.5
+model: {backbone: resnet18, proj_hidden_dim: 2048, proj_dim: 256}
+loss: {temperature: 0.2}
+optim:
+  epochs: 1000
+  batch_size: 256
+  lr: 0.4
+  weight_decay: 0.0001
+  classifier_lr: 0.1
+  grad_clip: null
+  name: lars
+  lars: {momentum: 0.9, eta: 0.02, clip_lr: true, exclude_bias_n_norm: true}
+  schedule: warmup_cosine
+  warmup_epochs: 10
+  warmup_start_lr: 3.0e-05
+  precision: fp16
+eval: {every: 10}
+wandb:
+  enabled: false
+  project: scoreclr
+  entity: null
+  group: null
+  tags: []
