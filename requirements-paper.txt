@@ -6,5 +6,5 @@ torchvision==0.20.1+cu121
 numpy==2.4.6
 pyyaml==6.0.3
 pillow==12.3.0
-matplotlib==3.11.0   # benchmarks/ only
+matplotlib==3.11.0   # analysis/benchmarks/ only
 wandb==0.28.0        # optional (wandb.enabled=true)

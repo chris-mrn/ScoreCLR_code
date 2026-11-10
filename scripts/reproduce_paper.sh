@@ -45,4 +45,4 @@ for row in "${ROWS[@]}"; do
 done
 
 python -m scoreclr.evaluation.report "$OUT"
-python benchmarks/cost_model.py "$OUT/cost_vs_batch.pdf"
+python analysis/benchmarks/cost_model.py "$OUT/cost_vs_batch.pdf"

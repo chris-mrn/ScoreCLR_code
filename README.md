@@ -26,14 +26,15 @@ src/scoreclr/
   data/                 augmentations, datasets, loaders
   models/               ResNet backbone, encoder (backbone + projector + online classifier), score net
   methods/              SSLMethod (base: shared encoder, objective on the two views' codes)
-                        and its subclasses ScoreCLR, SimCLR, LeJEPA
+                        and its subclasses ScoreCLR, SimCLR, LeJEPA, BYOL, Barlow Twins
   train/                the training loop shared by every method; optimizers (AdamW, LARS) and schedules
   evaluation/           the evaluation shared by every method: kNN, linear probe, geometry, rank,
                         normality, transfer, and the paper's tables
   utils/                config, distributed, checkpoints, logging
   tests/
 scripts/                reproduce_paper.sh, make_imagenet100.py
-benchmarks/             cost model (paper figure) and measured GPU cost
+analysis/               research tooling outside the package: run-to-run diagnostics, functional
+                        constants, cost model (paper figure) and measured GPU cost (benchmarks/)
 ```
 
 A method is a subclass of `scoreclr.methods.SSLMethod` that implements `loss(z0, z1)`; ScoreCLR also
@@ -90,7 +91,7 @@ bash scripts/reproduce_paper.sh cifar10_scoreclr                                
 
 `DATA` receives CIFAR-10, STL-10 and DTD (downloaded by torchvision). CIFAR-10 rows use one GPU,
 ImageNet-100 rows `NGPU=2` GPUs with 128 images per GPU. The tables alone:
-`python -m scoreclr.evaluation.report runs`; the cost figure: `python benchmarks/cost_model.py out.pdf`.
+`python -m scoreclr.evaluation.report runs`; the cost figure: `python analysis/benchmarks/cost_model.py out.pdf`.
 
 | row (`config/<row>.yaml`) | hardware | linear / kNN top-1 (paper) |
 |---|---|---|
@@ -117,6 +118,6 @@ What to expect:
 - The transfer penalty is selected on a validation split; near-ties can flip between reruns on GPU.
 - Epps-Pulley and uniformity are random statistics (seeded here); their last digit can differ.
 
-`benchmarks/` also measures the GPU time and memory of the objectives against batch size
+`analysis/benchmarks/` also measures the GPU time and memory of the objectives against batch size
 (`measured_objective_cost.py`, `plot_measured_cost.py`) and the wall-clock time per epoch
 (`measured_epoch_time.py`), with the training code itself.

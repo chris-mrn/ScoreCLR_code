@@ -17,4 +17,5 @@ test = ["pytest"]
 where = ["src"]
 
 [tool.pytest.ini_options]
-testpaths = ["src/scoreclr/tests"]
+testpaths = ["src/scoreclr/tests", "analysis"]
+pythonpath = ["analysis"]

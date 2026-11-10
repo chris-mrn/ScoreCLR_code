@@ -1,6 +1,6 @@
 """Measured cost vs batch, from measured_objective_cost.py's results (JSON lines).
 
-    python benchmarks/plot_measured_cost.py results.jsonl cost_vs_batch_measured.pdf
+    python analysis/benchmarks/plot_measured_cost.py results.jsonl cost_vs_batch_measured.pdf
 
 (a) objective alone, ms per step; (b) objective alone, extra peak memory; (c) full iteration,
 time ratio ScoreCLR / SimCLR; (d) full iteration, peak-memory ratio ScoreCLR / SimCLR.
