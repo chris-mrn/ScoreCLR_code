@@ -1,10 +1,10 @@
-"""Analytical cost vs global batch size B (the cost model of the paper's appendix, Table tab:cost)
+"""Analytical cost vs global batch size B (the cost model of Appendix C.7 of the paper, Table 10)
 
     python analysis/benchmarks/cost_model.py [out.pdf]
 
 Analytical cost vs global batch size B (two views per image), unconditional recipe.
 
-Cost model (Appendix app:cost): N = 2B codes of dimension d = 256.
+Cost model (Appendix C.7): N = 2B codes of dimension d = 256.
   SimCLR objective : 6 N^2 d FLOPs, 16 N^2 bytes
   ScoreCLR objective: 2P(6S+2K) = 20.18 MFLOPs per image (score net P = 280,320, S = 5, K = 3)
                       and 39,424 bytes per image saved for backward in fp32:
@@ -14,7 +14,7 @@ Cost model (Appendix app:cost): N = 2B codes of dimension d = 256.
 Full-iteration per-device memory ratio (W devices):
   (a B/W + c B/W) / (a B/W + 16 (2B/W)(2B))  =  (a + c) / (a + 64 B)
 with c = 39,424 bytes and a = saved-activation bytes per image of the encoder (mixed precision),
-taken from the previous version of Table tab:cost (a fitted at B = 32768 with its 30.8 KB).
+fitted at B = 32768 with an earlier estimate of c (30.8 KB per image).
 """
 import os
 import sys
@@ -42,7 +42,7 @@ C_NEW = 39424.0
 score_tflops = 20.18304e6 * B / 1e12
 score_gb = C_NEW * B / 1e9
 
-# Table tab:cost points
+# Table 10 points
 Bt = np.array([4096, 8192, 16384, 32768, 65536])
 tab = {
     "simclr_tflops": [0.10, 0.41, 1.65, 6.60, 26.4],
@@ -53,7 +53,7 @@ tab = {
     "r18_224": [0.99, 0.98, 0.96, 0.92, 0.85],
 }
 
-# encoder activation bytes per image, fitted on the B = 32768 row of the previous table (c = 30.8 KB there)
+# encoder activation bytes per image, fitted at B = 32768 with an earlier estimate of c (30.8 KB per image)
 def fit_a(r):
     return (r * 64 * 32768 - 30.8e3) / (1 - r)
 

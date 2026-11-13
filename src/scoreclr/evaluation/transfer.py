@@ -39,7 +39,7 @@ TARGET_INFO: Dict[str, Tuple[int, bool]] = {
 DEFAULT_ROOTS: Dict[str, str] = {}
 
 # Default target list per pretraining dataset: everything in TARGET_INFO except the
-# source itself (in-domain accuracy is tab:linear's job).
+# source itself (in-domain accuracy is measured by the linear probe).
 def default_targets(source_dataset: str) -> List[str]:
     return [t for t in TARGET_INFO if t != source_dataset]
 
@@ -256,9 +256,8 @@ def run_transfer_eval(
     log=print,
 ) -> Dict[str, Dict[str, float]]:
     """{target: evaluate_transfer_features(...) + resolution/num_classes} for every target.
-    With strict=False a target whose dataset cannot be built (missing root on this cluster)
-    is skipped with a warning instead of raising -- the end-of-pretraining callback uses that
-    so a missing downstream dataset never kills a finished pretraining job."""
+    With strict=False a target whose dataset cannot be built (e.g. a missing root) is skipped
+    with a warning instead of raising."""
     targets = list(targets) if targets else default_targets(source_dataset)
     roots = {**DEFAULT_ROOTS, **(roots or {})}
     resolution = resolution or default_resolution(source_dataset)

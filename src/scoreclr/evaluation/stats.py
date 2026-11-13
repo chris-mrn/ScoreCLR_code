@@ -1,6 +1,6 @@
-"""Statistics of the paper's geometry, rank and normality tables, from extracted features.
+"""Statistics of the representation (geometry, rank, normality), from extracted features.
 
-The functions are those of the script that produced the tables (analysis_r50/normality_stats.py):
+The functions are those that produced the paper's tables:
   RankMe            exp(entropy) of the normalized singular values of the raw feature matrix
   top-1 share       variance share of the first principal component
   kurtosis          mean per-coordinate excess kurtosis of z
@@ -9,8 +9,8 @@ The functions are those of the script that produced the tables (analysis_r50/nor
                     reference
   align / unif      Wang & Isola (2020) on L2-normalized z: alignment over the augmented pairs,
                     uniformity over 4000 random validation codes
-EP and uniformity are random; they are seeded here, which the original script was not per run, so
-their last digits can differ from the paper (by about the sd over the 5 EP draws).
+EP and uniformity are random; they are seeded here, which they were not for the paper's tables, so
+their last digits can differ (by about the sd over the 5 EP draws).
 """
 
 import numpy as np
