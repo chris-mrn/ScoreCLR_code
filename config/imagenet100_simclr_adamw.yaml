@@ -1,7 +1,8 @@
-# SimCLR, shared AdamW recipe, ImageNet-100: 2 GPUs x 128 (negatives gathered across GPUs), seed 5.
+# SimCLR, shared AdamW recipe, ImageNet-100: 2 GPUs x 128 (negatives gathered across GPUs).
+# The paper reports mean +- std over seeds 1, 2 and 3 (override: seed=<n>).
 # Evaluation (shared by all methods): python -m scoreclr.evaluation
 method: simclr
-seed: 5
+seed: 1
 output_dir: runs/imagenet100_simclr_adamw
 data:
   dataset: imagenet100

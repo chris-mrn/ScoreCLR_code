@@ -1,9 +1,9 @@
 # ScoreCLR
 
 PyTorch implementation of ScoreCLR, self-supervised representation learning where the contrastive
-repulsion is replaced by a learned score, and of the two baselines of the paper, SimCLR and LeJEPA,
-in one code base: the three methods share the encoder, the data pipeline, the training loop and the
-evaluation, and differ only in their objective.
+repulsion is replaced by a learned score, and of the baselines of the paper (SimCLR, LeJEPA, BYOL and
+Barlow Twins) in one code base: the methods share the encoder, the data pipeline, the training loop and
+the evaluation, and differ only in their objective.
 
 ScoreCLR alternates two updates on the codes `z` of two augmented views:
 
@@ -33,8 +33,9 @@ src/scoreclr/
   utils/                config, distributed, checkpoints, logging
   tests/
 scripts/                reproduce_paper.sh, make_imagenet100.py
-analysis/               research tooling outside the package: run-to-run diagnostics, functional
-                        constants, cost model (paper figure) and measured GPU cost (benchmarks/)
+analysis/               tooling outside the package: run-to-run diagnostics, the Poincare-constant
+                        estimate (poincare_constant.py), the analytical cost model and the measured
+                        GPU cost (benchmarks/)
 ```
 
 A method is a subclass of `scoreclr.methods.SSLMethod` that implements `loss(z0, z1)`; ScoreCLR also
@@ -79,8 +80,8 @@ The same for every method and every run (`scoreclr.evaluation`):
 
 ## Reproducing the paper
 
-One command trains every row, evaluates it, prints each table next to the published numbers and draws
-the cost figure:
+One command trains every row, evaluates it, prints each table next to the paper's numbers and draws
+the analytical cost model:
 
 ```bash
 pip install -r requirements-paper.txt --extra-index-url https://download.pytorch.org/whl/cu121 && pip install -e .
@@ -91,33 +92,60 @@ bash scripts/reproduce_paper.sh cifar10_scoreclr                                
 
 `DATA` receives CIFAR-10, STL-10 and DTD (downloaded by torchvision). CIFAR-10 rows use one GPU,
 ImageNet-100 rows `NGPU=2` GPUs with 128 images per GPU. The tables alone:
-`python -m scoreclr.evaluation.report runs`; the cost figure: `python analysis/benchmarks/cost_model.py out.pdf`.
+`python -m scoreclr.evaluation.report runs`; the analytical cost model: `python analysis/benchmarks/cost_model.py out.pdf`.
 
-| row (`config/<row>.yaml`) | hardware | linear / kNN top-1 (paper) |
+| row (`config/<row>.yaml`) | seeds in the paper | linear / kNN top-1 (paper) |
 |---|---|---|
-| `cifar10_scoreclr` | 1 H100, about 3.2 h | 89.33 / 88.53 |
-| `cifar10_simclr_adamw` | 1 H100 | 89.45 / 88.56 |
-| `cifar10_lejepa` | 1 L40S | 90.07 / 88.35 |
-| `cifar10_simclr_lars` | 1 H100 | 90.79 / 89.99 |
-| `imagenet100_scoreclr` | 2 H100, about 7 h | 71.28 / 66.02 |
-| `imagenet100_simclr_adamw` | 2 A100 | 72.60 / 65.06 |
-| `imagenet100_simclr_lars` | 2 L40S | 75.40 / 69.98 |
-| `imagenet100_simclr_lars_proj4096` | 2 H100 | 77.02 / 71.60 |
+| `cifar10_scoreclr` | 1, 2, 3 | 88.87 ± 0.44 / 88.27 ± 0.13 |
+| `cifar10_simclr_adamw` | 1, 2, 3 | 89.26 ± 0.38 / 88.73 ± 0.18 |
+| `cifar10_lejepa` | 1, 2, 3 | 89.67 ± 0.13 / 88.40 ± 0.13 |
+| `cifar10_byol` | 1 | 88.90 / 88.37 |
+| `cifar10_barlow` | 1 | 87.89 / 87.26 |
+| `cifar10_simclr_lars` | 5 | 90.79 / 89.99 |
+| `imagenet100_scoreclr` | 1, 2, 3 | 71.23 ± 0.06 / 66.05 ± 0.39 |
+| `imagenet100_simclr_adamw` | 1, 2, 3 | 72.39 ± 0.62 / 66.41 ± 0.44 |
+| `imagenet100_simclr_lars` | 5 | 75.40 / 69.98 |
+| `imagenet100_simclr_lars_proj4096` | 5 | 77.02 / 71.60 |
 
-Every result is a single run with seed 5. The objectives, LARS and schedules of the baselines are
-ported from solo-learn.
+The ScoreCLR, SimCLR (AdamW) and LeJEPA rows are means ± standard deviations over seeds 1, 2 and 3
+(`seed=<n>` overrides the seed of a config); the other rows are single runs. The paper's SimCLR (LARS) rows
+were trained with solo-learn itself (its own augmentation pipeline, 16-bit mixed precision); the
+`*_simclr_lars` configs re-implement that recipe here, with the loss, LARS and schedules ported from
+solo-learn. The other baselines' objectives are also ported from solo-learn.
 
 What to expect:
 
-- **Evaluation protocol.** The published kNN of the baseline rows used a memory bank under crop + flip, and
-  the ImageNet-100 ScoreCLR probe had no warm-up; the shared protocol above, which this repository applies
-  to every method, does not reproduce those numbers exactly (the report marks them `*`).
+- **Evaluation protocol.** The kNN numbers of the SimCLR (LARS) rows were computed with a memory bank under
+  crop + flip; the shared protocol above, which this repository applies to every method, does not reproduce
+  them exactly (the report marks them `*`).
 - **Training is not deterministic** (cuDNN, fp32 without deterministic flags): reruns of one config and
   seed diverge after about 20 epochs, so final accuracies vary across reruns.
 - `imagenet100_simclr_lars` was pretrained with NVIDIA DALI data loading; this repository uses torchvision.
 - The transfer penalty is selected on a validation split; near-ties can flip between reruns on GPU.
 - Epps-Pulley and uniformity are random statistics (seeded here); their last digit can differ.
 
+## Other experiments of the paper
+
+Every key of a config can be overridden on the command line (`key.sub=value`); set `output_dir` so that a
+variant does not resume another run.
+
+- **Batch size** (Table 5, CIFAR-10, `seed=5`): `optim.batch_size` (per GPU), the encoder learning rate
+  `optim.lr` scaled by sqrt(B/128) for both methods, and for ScoreCLR `optim.score_steps` (S) as in the
+  caption of Table 5; the score-network learning rate is not scaled.
+- **Mixed precision** (Table 6): `optim.precision=fp16`.
+- **Ablations** (Appendix C): `loss.num_queries` (K), `optim.score_steps` (S), `loss.p_std`, `optim.grad_clip`,
+  `optim.score_grad_clip`.
+- **Poincare constant** (Table 3, Appendix C.8), on the codes saved by the evaluation:
+  `python analysis/poincare_constant.py --runs scoreclr=RUN1,RUN2,RUN3 simclr=...`.
+
 `analysis/benchmarks/` also measures the GPU time and memory of the objectives against batch size
 (`measured_objective_cost.py`, `plot_measured_cost.py`) and the wall-clock time per epoch
 (`measured_epoch_time.py`), with the training code itself.
+
+## Licence
+
+MIT (see `LICENSE`), with one exception: `src/scoreclr/methods/lejepa.py` adapts the reference
+implementation of LeJEPA's SIGReg (https://github.com/rbalestr-lab/lejepa), which is licensed under
+CC BY-NC 4.0, so that file is distributed under CC BY-NC 4.0 (non-commercial use only).
+`src/scoreclr/evaluation/stats.py` imports SIGReg from it for the Epps-Pulley statistic. The files ported
+from solo-learn (https://github.com/vturrisi/solo-learn, MIT) keep its copyright notice.

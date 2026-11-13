@@ -33,11 +33,12 @@ from scoreclr.utils import load_config
 
 dev = torch.device("cuda")
 D = 256
-CONFIG = Path(__file__).resolve().parents[1] / "config"
+CONFIG = Path(__file__).resolve().parents[2] / "config"
 RECIPES = {  # name: (config, overrides)
-    "scoreclr_S1_K1": ("cifar10_scoreclr", ["loss.num_queries=1"]),  # CIFAR-10 recipe with one query
-    "scoreclr_S1_K3": ("cifar10_scoreclr", []),  # CIFAR-10 row
-    "scoreclr_S5_K3": ("imagenet100_scoreclr", []),  # ImageNet-100 row
+    "scoreclr_S1_K1": ("cifar10_scoreclr", []),  # CIFAR-10 recipe: S=1, K=1
+    "scoreclr_S5_K3": ("imagenet100_scoreclr", []),  # ImageNet-100 recipe: S=5, K=3
+    "scoreclr_S5_K1": ("cifar10_scoreclr", ["optim.score_steps=5"]),  # S=5, K=1
+    "scoreclr_S10_K1": ("cifar10_scoreclr", ["optim.score_steps=10"]),  # large-batch runs: S=10, K=1
     "simclr": ("cifar10_simclr_adamw", []),
 }
 
@@ -155,7 +156,7 @@ def full_runs(part, res, precision, batches, W=1):
         n = B // W
         x0, x1, y = images(n, res)
         for name in ["none", *RECIPES]:
-            if res == 224 and name in ("scoreclr_S1_K1", "scoreclr_S1_K3"):
+            if res == 224 and name in ("scoreclr_S1_K1", "scoreclr_S5_K1", "scoreclr_S10_K1"):
                 continue  # ImageNet-100 uses the S=5, K=3 recipe
             if res == 32 and name == "scoreclr_S5_K3":
                 continue

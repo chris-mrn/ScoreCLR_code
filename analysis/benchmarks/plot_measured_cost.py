@@ -22,8 +22,9 @@ C = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 METHODS = [("simclr", "SimCLR (InfoNCE)", C[0], "o", "-"),
            ("scoreclr_S1_K1", "ScoreCLR S=1, K=1", C[1], "s", "-"),
-           ("scoreclr_S1_K3", "ScoreCLR S=1, K=3", C[2], "^", "-"),
-           ("scoreclr_S5_K3", "ScoreCLR S=5, K=3", C[3], "D", "-")]
+           ("scoreclr_S5_K1", "ScoreCLR S=5, K=1", C[2], "^", "-"),
+           ("scoreclr_S5_K3", "ScoreCLR S=5, K=3", C[3], "D", "-"),
+           ("scoreclr_S10_K1", "ScoreCLR S=10, K=1", C[4], "v", "-")]
 plt.rcParams.update({"font.size": 8, "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": MUTED,
                      "ytick.color": MUTED, "axes.spines.top": False, "axes.spines.right": False})
 
@@ -60,11 +61,11 @@ style(axes[0], "ms per step", "(a) objective alone: time")
 style(axes[1], "extra peak memory (MiB)", "(b) objective alone: memory")
 axes[0].legend(frameon=False, fontsize=7)
 
-# full iteration ratios: each resolution with its own recipe (CIFAR-10: S=1, K=3; IN-100: S=5, K=3)
-SETTINGS = [("full", 32, "fp32", 1, "scoreclr_S1_K3", "32 px fp32, S=1 K=3", C[0], "o", "-"),
-            ("full", 32, "fp16", 1, "scoreclr_S1_K3", "32 px fp16, S=1 K=3", C[1], "s", "-"),
+# full iteration ratios: 32 px with S=1, K=1 (the CIFAR-10 recipe) and 224 px with S=5, K=3 (the ImageNet-100 recipe)
+SETTINGS = [("full", 32, "fp32", 1, "scoreclr_S1_K1", "32 px fp32, S=1 K=1", C[0], "o", "-"),
+            ("full", 32, "fp16", 1, "scoreclr_S1_K1", "32 px fp16, S=1 K=1", C[1], "s", "-"),
             ("full", 224, "fp32", 1, "scoreclr_S5_K3", "224 px fp32, S=5 K=3", C[2], "^", "-"),
-            ("dp_emulated", 32, "fp32", 8, "scoreclr_S1_K3", "32 px, W=8 (emulated)", C[3], "D", "--"),
+            ("dp_emulated", 32, "fp32", 8, "scoreclr_S1_K1", "32 px, W=8 (emulated)", C[3], "D", "--"),
             ("dp_emulated", 224, "fp32", 8, "scoreclr_S5_K3", "224 px, W=8 (emulated)", C[4], "v", "--")]
 for part, res, prec, W, m, label, c, mk, ls in SETTINGS:
     sc = {r["B"]: r for r in select(part=part, res=res, precision=prec, W=W, method=m)}
@@ -85,7 +86,7 @@ for ax, yl, t in [(axes[2], "time ScoreCLR / SimCLR", "(c) full iteration: time 
     ax.axhline(1.0, color=MUTED, lw=0.8, ls=":")
 axes[2].legend(frameon=False, fontsize=7)
 gpu = rows[0]["gpu"] if rows else ""
-fig.suptitle(f"Measured on one {gpu}, ScoreCLR_original {rows[0]['commit'] if rows else ''}; no data loader",
+fig.suptitle(f"Measured on one {gpu}, commit {rows[0]['commit'] if rows else ''}; no data loader",
              fontsize=8, color=MUTED, x=0.01, ha="left")
 fig.savefig(out)
 fig.savefig(out.rsplit(".", 1)[0] + ".png", dpi=200)

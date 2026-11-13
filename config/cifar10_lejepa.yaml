@@ -1,7 +1,8 @@
-# LeJEPA, shared AdamW recipe, CIFAR-10: ResNet-18, 1000 epochs, batch 128, seed 5, 1 GPU.
+# LeJEPA, shared AdamW recipe, CIFAR-10: ResNet-18, 1000 epochs, batch 128, 1 GPU.
+# The paper reports mean +- std over seeds 1, 2 and 3 (override: seed=<n>).
 # Evaluation (shared by all methods): python -m scoreclr.evaluation
 method: lejepa
-seed: 5
+seed: 1
 output_dir: runs/cifar10_lejepa
 data:
   dataset: cifar10

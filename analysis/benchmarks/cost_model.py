@@ -1,8 +1,8 @@
-"""Analytical cost vs global batch size B (the paper's Fig. fig:cost and Table tab:cost)
+"""Analytical cost vs global batch size B (the cost model of the paper's appendix, Table tab:cost)
 
     python analysis/benchmarks/cost_model.py [out.pdf]
 
-Copied from the paper sources (figures/make_cost_vs_batch.py). Analytical cost vs global batch size B (two views per image), Fig. fig:cost, unconditional recipe.
+Analytical cost vs global batch size B (two views per image), unconditional recipe.
 
 Cost model (Appendix app:cost): N = 2B codes of dimension d = 256.
   SimCLR objective : 6 N^2 d FLOPs, 16 N^2 bytes

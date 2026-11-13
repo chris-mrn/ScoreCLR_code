@@ -1,7 +1,9 @@
-# ScoreCLR, ImageNet-100: ResNet-18, 2 GPUs x 128, 5 score updates and 3 repulsion queries, seed 5.
+# ScoreCLR, ImageNet-100, recipe of the paper: ResNet-18, 400 epochs, 2 GPUs x 128; K=3 noise queries per code,
+# S=5 score-network steps per iteration, noise width p_std 1.0, attraction weight 2, gradient clip 1.0 on the
+# encoder and on the score network. The paper reports mean +- std over seeds 1, 2 and 3 (override: seed=<n>).
 # Evaluation (shared by all methods): python -m scoreclr.evaluation
 method: scoreclr
-seed: 5
+seed: 1
 output_dir: runs/imagenet100_scoreclr
 data:
   dataset: imagenet100
@@ -17,10 +19,10 @@ data:
     flip_prob: 0.5
 model: {backbone: resnet18, proj_hidden_dim: 2048, proj_dim: 256, score_hidden_dim: 256,
   score_time_emb_dim: 64}
-loss: {attr_weight: 2.0, p_mean: -1.2, p_std: 0.8, num_queries: 3}
+loss: {attr_weight: 2.0, p_mean: -1.2, p_std: 1.0, num_queries: 3}
 optim: {epochs: 400, batch_size: 128, lr: 0.0002, weight_decay: 1.0e-06, classifier_lr: 0.01,
   score_lr: 0.001, score_weight_decay: 0.01, score_steps: 5, cosine_decay_epochs: 100,
-  grad_clip: null}
+  grad_clip: 1.0, score_grad_clip: 1.0}
 eval: {every: 20}
 wandb:
   enabled: false

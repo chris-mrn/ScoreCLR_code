@@ -1,9 +1,9 @@
-# Barlow Twins, shared AdamW recipe, CIFAR-10.
+# Barlow Twins, shared AdamW recipe, CIFAR-10. Single run in the paper (seed 1).
 # Every shared value (augmentations, encoder, 2048/256 projector without BatchNorm, AdamW lr 2e-4, batch 128,
 # 1000 epochs with a cosine over the last 100, encoder clipping at 1) is cifar10_simclr_adamw.yaml's.
 # Loss values are solo-learn's CIFAR Barlow Twins recipe: scale_loss 0.1 , lamb 0.0051.
 method: barlow
-seed: 5
+seed: 1
 output_dir: runs/cifar10_barlow
 data:
   dataset: cifar10
