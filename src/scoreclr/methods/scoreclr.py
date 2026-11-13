@@ -3,7 +3,8 @@
     score net:  ||eps_hat(z_t, sigma) - eps||^2                    (denoising score matching)
     encoder:    attr_weight * ||z0 - z1||^2 + 0.5 * ||s(z_t)||^2 + 0.5 * ||z_t||^2,   all / dim
 
-The repulsion term is written so that its gradient w.r.t. z is the frozen score s = -eps_hat / sigma:
+The repulsion term is ScoreReg in the paper, the score-based estimate of the entropy term of the mutual
+information. It is written so that its gradient w.r.t. z is the frozen score s = -eps_hat / sigma:
 descending it moves codes towards lower density. Together with the Gaussian prior term it is a
 DMD-style estimate of KL(Z || N(0, I)).
 """
@@ -52,7 +53,7 @@ def scoreclr_loss(
     score = torch.stack(scores).mean(0)
 
     attr = attr_weight * (z0 - z1).pow(2).sum(dim=1).mean() / dim
-    rep = 0.5 * (z - (z - score).detach()).pow(2).sum(dim=1).mean() / dim
+    rep = 0.5 * (z - (z - score).detach()).pow(2).sum(dim=1).mean() / dim  # ScoreReg
     prior = prior_weight * torch.stack(priors).mean()
     return attr, rep, prior
 

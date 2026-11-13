@@ -15,7 +15,8 @@ ScoreCLR alternates two updates on the codes `z` of two augmented views:
 
    `attr_weight · ‖z₀ − z₁‖²  +  ½‖s(z_t)‖²  +  ½‖z_t‖²`
 
-   The repulsion term has gradient `s` with respect to `z`, so descending it pushes codes towards
+   The repulsion term is **ScoreReg** in the paper: the score-based estimate of the entropy term of the
+   mutual information. It has gradient `s` with respect to `z`, so descending it pushes codes towards
    lower density. With the Gaussian prior term it estimates `KL(Z ‖ N(0, I))`.
 
 ## Layout
