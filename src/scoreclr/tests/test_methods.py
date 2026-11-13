@@ -141,16 +141,3 @@ def test_byol_target_is_an_ema_of_the_online_network(tiny_cfg):
     assert all(p.grad is not None for p in m.predictor.parameters())
     assert all(t.grad is None for t in target)
     assert any(k.startswith("target.") for k in m.state_dict())  # checkpointed, so a resumed run keeps it
-
-
-def test_scoreclr_prior_weight_zero_removes_the_prior_term(tiny_cfg):
-    from scoreclr.utils import load_config
-    cfg = load_config("config/cifar10_scoreclr.yaml",
-                      ["model.proj_hidden_dim=32", "model.proj_dim=16", "model.score_hidden_dim=32",
-                       "model.score_time_emb_dim=8", "loss.prior_weight=0"])
-    m = ScoreCLR(cfg, 10, True)
-    z0, z1 = torch.randn(8, 16, requires_grad=True), torch.randn(8, 16, requires_grad=True)
-    out = m.loss(z0, z1)
-    assert m.prior_weight == 0.0 and out["prior"].item() == 0.0
-    out["loss"].backward()
-    assert torch.isfinite(z0.grad).all()

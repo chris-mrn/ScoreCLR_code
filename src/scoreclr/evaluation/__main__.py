@@ -5,7 +5,7 @@
 Reads <run>/last.pt (its config and weights) and writes <run>/evaluation.json:
   monitor   online classifier and kNN accuracy (scoreclr.evaluation.knn)
   linear    offline linear probe (scoreclr.evaluation.linear)
-  stats     alignment / uniformity, RankMe of h and z, kurtosis, Epps-Pulley (scoreclr.evaluation.stats),
+  stats     alignment / uniformity, RankMe of h and z (scoreclr.evaluation.stats),
             from <run>/features.npz (scoreclr.evaluation.features)
   transfer  linear transfer to the paper's targets (scoreclr.evaluation.transfer)
 Transfer roots are the directories torchvision's CIFAR10 / STL10 / DTD expect (containing

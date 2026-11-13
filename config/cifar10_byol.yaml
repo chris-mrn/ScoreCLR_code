@@ -1,4 +1,4 @@
-# BYOL, shared AdamW recipe, CIFAR-10. Single run in the paper (seed 1).
+# BYOL, shared AdamW recipe, CIFAR-10. The paper reports mean +- std over seeds 1, 2 and 3 (override: seed=<n>).
 # Every shared value (augmentations, encoder, 2048/256 projector without BatchNorm, AdamW lr 2e-4, batch 128,
 # 1000 epochs with a cosine over the last 100, encoder clipping at 1) is cifar10_simclr_adamw.yaml's.
 # Method values are solo-learn's CIFAR BYOL recipe : predictor hidden 4096,

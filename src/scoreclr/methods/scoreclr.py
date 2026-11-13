@@ -35,7 +35,7 @@ def dsm_loss(score_net: ScoreNet, z: torch.Tensor, p_mean: float, p_std: float) 
 
 def scoreclr_loss(
     score_net: ScoreNet, z0: torch.Tensor, z1: torch.Tensor, attr_weight: float, p_mean: float, p_std: float,
-    num_queries: int = 1, prior_weight: float = 1.0,
+    num_queries: int = 1,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Encoder loss against the frozen score net. Returns (attraction, repulsion, prior).
 
@@ -54,7 +54,7 @@ def scoreclr_loss(
 
     attr = attr_weight * (z0 - z1).pow(2).sum(dim=1).mean() / dim
     rep = 0.5 * (z - (z - score).detach()).pow(2).sum(dim=1).mean() / dim  # ScoreReg
-    prior = prior_weight * torch.stack(priors).mean()
+    prior = torch.stack(priors).mean()
     return attr, rep, prior
 
 
@@ -67,7 +67,6 @@ class ScoreCLR(SSLMethod):
         self.score_net = ScoreNet(self.encoder.code_dim, cfg.model.score_hidden_dim, cfg.model.score_time_emb_dim)
         self.attr_weight, self.p_mean, self.p_std = cfg.loss.attr_weight, cfg.loss.p_mean, cfg.loss.p_std
         self.num_queries = cfg.loss.get("num_queries", 1)
-        self.prior_weight = cfg.loss.get("prior_weight", 1.0)  # 0 removes the L2 (Gaussian prior) term
         self.score_steps = cfg.optim.score_steps
         self.score_grad_clip = cfg.optim.get("score_grad_clip")  # None: no clipping
         object.__setattr__(self, "_trained_score_net", self.score_net)  # DDP-wrapped by distribute, not a submodule
@@ -91,5 +90,5 @@ class ScoreCLR(SSLMethod):
 
     def loss(self, z0, z1, targets=None) -> Dict[str, torch.Tensor]:
         attr, rep, prior = scoreclr_loss(self.score_net, z0, z1, self.attr_weight, self.p_mean, self.p_std,
-                                         self.num_queries, self.prior_weight)
+                                         self.num_queries)
         return {"loss": attr + rep + prior, "attr": attr.detach(), "rep": rep.detach(), "prior": prior.detach()}
