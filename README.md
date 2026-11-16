@@ -5,6 +5,8 @@ repulsion is replaced by a learned score, together with the baselines of the pap
 and Barlow Twins). All methods share the encoder, the data pipeline, the training loop and the
 evaluation, and differ only in their objective.
 
+Paper: [*Contrastive latent representation learning with denoising score matching*](https://arxiv.org/abs/2611.18469) (arXiv:2611.18469).
+
 <p align="center">
   <img src="assets/scoreclr_repulsion.png" width="900" alt="Repulsion force of ScoreCLR and SimCLR">
 </p>
