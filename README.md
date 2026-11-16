@@ -54,18 +54,18 @@ pytest
 ResNet-18, shared AdamW recipe (gradient clip 1.0, 2048/256 projector without BatchNorm). Mean ± std over
 seeds 1, 2 and 3; SimCLR (LARS) rows are single runs (seed 5).
 
-| row (`config/<row>.yaml`) | linear top-1 | kNN top-1 |
+| config | linear top-1 | kNN top-1 |
 |---|---|---|
-| `cifar10_scoreclr` | 88.87 ± 0.44 | 88.27 ± 0.13 |
-| `cifar10_simclr_adamw` | 89.26 ± 0.38 | 88.73 ± 0.18 |
-| `cifar10_lejepa` | 89.67 ± 0.13 | 88.40 ± 0.13 |
-| `cifar10_byol` | 88.96 ± 0.30 | 88.44 ± 0.22 |
-| `cifar10_barlow` | 88.05 ± 0.15 | 87.17 ± 0.09 |
-| `cifar10_simclr_lars` | 90.79 | 89.99 |
-| `imagenet100_scoreclr` | 71.23 ± 0.06 | 66.05 ± 0.39 |
-| `imagenet100_simclr_adamw` | 72.39 ± 0.62 | 66.41 ± 0.44 |
-| `imagenet100_simclr_lars` | 75.40 | 69.98 |
-| `imagenet100_simclr_lars_proj4096` | 77.02 | 71.60 |
+| [`cifar10_scoreclr`](config/cifar10_scoreclr.yaml) | 88.87 ± 0.44 | 88.27 ± 0.13 |
+| [`cifar10_simclr_adamw`](config/cifar10_simclr_adamw.yaml) | 89.26 ± 0.38 | 88.73 ± 0.18 |
+| [`cifar10_lejepa`](config/cifar10_lejepa.yaml) | 89.67 ± 0.13 | 88.40 ± 0.13 |
+| [`cifar10_byol`](config/cifar10_byol.yaml) | 88.96 ± 0.30 | 88.44 ± 0.22 |
+| [`cifar10_barlow`](config/cifar10_barlow.yaml) | 88.05 ± 0.15 | 87.17 ± 0.09 |
+| [`cifar10_simclr_lars`](config/cifar10_simclr_lars.yaml) | 90.79 | 89.99 |
+| [`imagenet100_scoreclr`](config/imagenet100_scoreclr.yaml) | 71.23 ± 0.06 | 66.05 ± 0.39 |
+| [`imagenet100_simclr_adamw`](config/imagenet100_simclr_adamw.yaml) | 72.39 ± 0.62 | 66.41 ± 0.44 |
+| [`imagenet100_simclr_lars`](config/imagenet100_simclr_lars.yaml) | 75.40 | 69.98 |
+| [`imagenet100_simclr_lars_proj4096`](config/imagenet100_simclr_lars_proj4096.yaml) | 77.02 | 71.60 |
 
 ## Reproducing the paper
 
