@@ -1,12 +1,12 @@
 """ScoreCLR. With codes z of the two views and z_t = z + sigma * eps:
 
     score net:  ||eps_hat(z_t, sigma) - eps||^2                    (denoising score matching)
-    encoder:    attr_weight * ||z0 - z1||^2 + 0.5 * ||s(z_t)||^2 + 0.5 * ||z_t||^2,   all / dim
+    encoder:    attr_weight * ||z0 - z1||^2 + 0.5 * ||z - sg(z + drift)||^2 + 0.5 * ||z_t||^2,   all / dim
 
-The repulsion term is ScoreReg in the paper, the score-based estimate of the entropy term of the mutual
-information. It is written so that its gradient w.r.t. z is the frozen score s = -eps_hat / sigma:
-descending it moves codes towards lower density. Together with the Gaussian prior term it is a
-DMD-style estimate of KL(Z || N(0, I)).
+with drift = -s(z_t) the drift of the frozen score s = -eps_hat / sigma and sg the stop-gradient. The
+middle (repulsion) term is ScoreReg in the paper, the score-based estimate of the entropy term of the mutual
+information. Its gradient w.r.t. z is -drift = s: descending it moves codes along the drift, towards lower
+density. Together with the Gaussian prior term it is a DMD-style estimate of KL(Z || N(0, I)).
 """
 
 from typing import Dict, Tuple

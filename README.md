@@ -19,9 +19,11 @@ ScoreCLR alternates two updates on the codes `z` of two augmented views:
 
 1. **Score net**: denoising score matching on the detached codes, `‖ε̂(z_t, σ) − ε‖²` with
    `z_t = z + σε` and `ln σ ~ N(p_mean, p_std²)`.
-2. **Encoder**: `attr_weight · ‖z₀ − z₁‖²  +  ½‖s(z_t)‖²  +  ½‖z_t‖²` against the frozen score
-   `s = −ε̂/σ`. The middle term (ScoreReg in the paper) pushes codes towards lower density; with the
-   Gaussian prior term it estimates `KL(Z ‖ N(0, I))`.
+2. **Encoder**: `attr_weight · ‖z₀ − z₁‖²  +  ½‖z − sg(z + drift)‖²  +  ½‖z_t‖²`, with the drift
+   `drift = −s(z_t)` of the frozen score `s = −ε̂/σ` and `sg` the stop-gradient. The middle term
+   (ScoreReg in the paper) has gradient `−drift`, so a gradient step moves each code along the drift,
+   towards lower density; with the L2 penalty (the Gaussian prior) it estimates `KL(Z ‖ N(0, I))`.
+   Every term is divided by the code dimension.
 
 ## Usage
 
