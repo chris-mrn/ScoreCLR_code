@@ -6,6 +6,7 @@ and Barlow Twins). All methods share the encoder, the data pipeline, the trainin
 evaluation, and differ only in their objective.
 
 Paper: [*Contrastive latent representation learning with denoising score matching*](https://arxiv.org/abs/2611.18469) (arXiv:2611.18469).
+
 Authors: Christopher Marouani ([Google Scholar](https://scholar.google.com/citations?user=K97ooMoAAAAJ),
 [website](https://chris-mrn.github.io)), Grigory Bartosh, Christian A. Naesseth.
 
